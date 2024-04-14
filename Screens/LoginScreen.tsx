@@ -8,7 +8,7 @@ const LoginScreen = () => {
     style={styles.background}
     >
 
-        <View>
+        <View style={styles.Container}>
             <LoginFormComponent />
         </View>
 
@@ -23,5 +23,9 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    Container: {
+      backgroundColor: 'rgba(255,255,255,0.8)',
+      borderRadius: 10
     }
 })

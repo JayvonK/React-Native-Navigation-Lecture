@@ -1,22 +1,37 @@
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
+import { createAccount, login } from '../DataServices/Dataservices';
+import { IToken } from '../Interfaces/Interfaces';
+import { LoginProps, Props } from '../type';
 
 const LoginFormComponent = () => {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [edit, setEdit] = useState<boolean>(true);
 
-    const navigate = useNavigation()
+    const navigate = useNavigation<LoginProps>()
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const userData = {
             username: username,
             password: password
         }
 
-        navigate.navigate("ProfileScreen")
-        
+        if (edit) {
+            let token: IToken = await login(userData);
+            console.log(token);
+            if (token) {
+                navigate.navigate("ProfileScreen")
+            }
+        } else {
+            createAccount(userData);
+        }
+
+    }
+
+    const handleChangeEdit = () => {
+        setEdit(!edit);
     }
 
     return (
@@ -35,9 +50,9 @@ const LoginFormComponent = () => {
                 onChangeText={setPassword}
                 secureTextEntry
             />
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '75%'}}>
-                <Text style={{color: 'blue', textDecorationLine: 'underline'}}>{edit ? 'Register' : 'Login'}</Text>
-                <Button title='Submit' onPress={handleSubmit}/>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '75%' }}>
+                <Text onPress={handleChangeEdit} style={{ color: 'blue', textDecorationLine: 'underline' }}>{edit ? 'Register' : 'Login'}</Text>
+                <Button title='Submit' onPress={handleSubmit} />
             </View>
         </View>
     )
@@ -48,7 +63,7 @@ export default LoginFormComponent
 const styles = StyleSheet.create({
     Container: {
         justifyContent: 'center',
-        alignContent: 'center',
+        alignItems: 'center',
         padding: 20
     },
     Input: {
@@ -58,7 +73,8 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         borderRadius: 5,
         backgroundColor: 'white',
-        marginBottom: 10
+        marginBottom: 10,
+        paddingHorizontal: 10
     }
 
 })
